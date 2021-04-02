@@ -20,6 +20,25 @@ def approximate_size(size, a_kilobyte_is_1024_bytes=True):
 
    raise ValueError('number too large')
 
+def increment_value( val ):
+   return val + 1
+
+def to_bool( anything ):
+   if anything: return True
+   else: return False
+
+def plural(noun):
+   import re
+
+   if re.search('[sxz]$', noun):
+      return re.sub('$', 'es', noun)
+   elif re.search('[^aeioudgkprt]h$', noun):
+      return re.sub('$', 'es', noun)
+   elif re.search('[^aeiou]y$', noun):
+      return re.sub('y$', 'ies', noun)
+   else:
+      return noun + 's'
+
 if __name__ == '__main__':
    print(approximate_size(1000000000000, False))
    print(approximate_size(1000000000000))
