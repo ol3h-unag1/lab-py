@@ -27,17 +27,34 @@ def to_bool( anything ):
    if anything: return True
    else: return False
 
-def plural(noun):
-   import re
 
-   if re.search('[sxz]$', noun):
-      return re.sub('$', 'es', noun)
-   elif re.search('[^aeioudgkprt]h$', noun):
-      return re.sub('$', 'es', noun)
-   elif re.search('[^aeiou]y$', noun):
-      return re.sub('y$', 'ies', noun)
-   else:
-      return noun + 's'
+import re # !
+
+def build_match_apply_function(pattern, search, replace):
+   
+   def matches_rule(noun):
+      return re.search(pattern, noun)
+   def apply_rule(noun):
+      return re.sub(search, replace, noun)
+
+   return (matches_rule, apply_rule)
+
+plur_rules = []
+
+import os # !
+
+plur_patterns_filename = 'pluralization_rules.txt'
+plur_patterns_file_path = os.path.join( os.path.dirname(os.path.realpath(__file__)), plur_patterns_filename)
+with open(plur_patterns_file_path, encoding = 'utf-8') as plur_pattern_file:
+   for line in plur_pattern_file:
+      pattern, search, replace = line.split(None,3)
+      plur_rules.append(build_match_apply_function(pattern, search, replace))
+
+
+def plural(noun):
+   for match_rule, apply_rule in plur_rules:
+      if match_rule(noun):
+         return apply_rule(noun)
 
 if __name__ == '__main__':
    print(approximate_size(1000000000000, False))
