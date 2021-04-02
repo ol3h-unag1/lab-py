@@ -28,7 +28,7 @@ def to_bool( anything ):
    else: return False
 
 
-import re # !
+import re # !build_match_apply_function
 
 def build_match_apply_function(pattern, search, replace):
    
@@ -41,7 +41,7 @@ def build_match_apply_function(pattern, search, replace):
 
 plur_rules = []
 
-import os # !
+import os # !plur_patterns_file_path
 
 plur_patterns_filename = 'pluralization_rules.txt'
 plur_patterns_file_path = os.path.join( os.path.dirname(os.path.realpath(__file__)), plur_patterns_filename)
@@ -55,6 +55,7 @@ def plural(noun):
    for match_rule, apply_rule in plur_rules:
       if match_rule(noun):
          return apply_rule(noun)
+
 
 if __name__ == '__main__':
    print(approximate_size(1000000000000, False))
