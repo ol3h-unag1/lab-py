@@ -20,6 +20,9 @@ def approximate_size(size, a_kilobyte_is_1024_bytes=True):
 
    raise ValueError('number too large')
 
+###################################################
+###################################################
+
 def increment_value( val ):
    return val + 1
 
@@ -27,6 +30,8 @@ def to_bool( anything ):
    if anything: return True
    else: return False
 
+###################################################
+###################################################
 
 import re # !build_match_apply_function
 
@@ -39,20 +44,18 @@ def build_match_apply_function(pattern, search, replace):
 
    return (matches_rule, apply_rule)
 
-plur_rules = []
+def rules(file_path):
+   with open(file_path, encoding = 'utf-8') as plur_pattern_file:
+      for line in plur_pattern_file:
+         pattern, search, replace = line.split(None,3)
+         yield build_match_apply_function(pattern, search, replace)
 
-import os # !plur_patterns_file_path
+import os # !plural
 
 plur_patterns_filename = 'pluralization_rules.txt'
-plur_patterns_file_path = os.path.join( os.path.dirname(os.path.realpath(__file__)), plur_patterns_filename)
-with open(plur_patterns_file_path, encoding = 'utf-8') as plur_pattern_file:
-   for line in plur_pattern_file:
-      pattern, search, replace = line.split(None,3)
-      plur_rules.append(build_match_apply_function(pattern, search, replace))
 
-
-def plural(noun):
-   for match_rule, apply_rule in plur_rules:
+def plural(noun, patterns_file_path = os.path.join( os.path.dirname(os.path.realpath(__file__)), plur_patterns_filename)):
+   for match_rule, apply_rule in rules(patterns_file_path):
       if match_rule(noun):
          return apply_rule(noun)
 
