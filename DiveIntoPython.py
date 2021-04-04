@@ -132,7 +132,37 @@ class FibByIndex:
 ###################################################
 ###################################################
 
+import itertools
 
-if __name__ == '__main__':   
-   for w in words:
-      print(plural(w))
+def alphametic_solver(puzzle):
+    words = re.findall('[A-Z]+', puzzle.upper())
+    unique_characters = set(''.join(words))
+    assert len(unique_characters) <= 10, 'Too many letters'
+    first_letters = {word[0] for word in words}
+    n = len(first_letters)
+    sorted_characters = ''.join(first_letters) + \
+        ''.join(unique_characters - first_letters)
+    characters = tuple(ord(c) for c in sorted_characters)
+    digits = tuple(ord(c) for c in '0123456789')
+ 
+    #print('words: {0}'.format(words))
+    #print('len(first_letters): {0}'.format(n))
+    #
+    #print('unique_characters: {0}'.format(unique_characters))
+    #print('first_letters: {0}'.format(first_letters))
+    #print('sorted_characters: {0}'.format(sorted_characters))
+    #
+    #print('characters: {0}'.format(characters))
+    #print('digits: {0}'.format(digits))
+
+    zero = digits[0]
+    for guess in itertools.permutations(digits, len(characters)):
+        if zero not in guess[:n]:
+            equation = puzzle.translate(dict(zip(characters, guess)))
+            if eval(equation):
+                return equation
+
+if __name__ == '__main__':
+   solution = alphametic_solver('SEND + MORE == HONEY')
+   if solution:
+      print(solution)
