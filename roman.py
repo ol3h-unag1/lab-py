@@ -50,14 +50,11 @@ def build_lookup_tables():
       result = ''
       for numeral, integer in roman_numeral_map:
          if n >= integer:
-            print('n:', n, 'numeral: ', numeral, 'integer:', integer)
             result = numeral
             n -= integer
-            print('n:', n, 'result: ', result)
             break
       if n > 0:
          result += to_roman_table[n]
-      print('n:', n, 'result: ', result, "\n---------")
       return result
    
    for integer in range(1, 5000):
