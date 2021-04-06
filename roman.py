@@ -1,3 +1,8 @@
+class OutOfRangeError(ValueError): pass
+class NonIntegerError(ValueError): pass
+class InvalidRomanNumeralError(ValueError): pass
+
+###
 roman_numeral_map = (('M',  1000),
                      ('CM', 900),
                      ('D',  500),
@@ -12,51 +17,52 @@ roman_numeral_map = (('M',  1000),
                      ('IV', 4),
                      ('I',  1))
 
-###
-class OutOfRangeError(ValueError): pass
-class NonIntegerError(ValueError): pass
-class InvalidRomanNumeralError(ValueError): pass
+to_roman_table = [ None ]
+from_roman_table = {}
 
 ###
 def to_roman(n):
    '''convert integer to Roman numeral'''
-   if not (0 < n < 4000):
-      raise OutOfRangeError('number out of range - should be in range "0 < number < 4000"')
-   if not isinstance(n, int):
+   if not (0 < n < 5000):
+      raise OutOfRangeError('number <{}> is out of range - should be in range "0 < number < 5000"'.format(n))
+   if int(n) != n:
       raise NonIntegerError('non-integers cannot be converted')
 
-   result = ''
-   for numeral, integer in roman_numeral_map:
-      while n >= integer:
-         result += numeral
-         n -= integer
-   return result
+   return to_roman_table[n]
 
 ###
-import re #!roman_numeral_patter
-roman_numeral_pattern = re.compile('''
-   ^                 # beginning of string
-   M{0,3}            # thousands 0 to 3 Ms
-   (CM|CD|D?C{0,3})  # hundreads - 900 (CM), 400 (CD), 0-300 (0 to 3 Cs),
-                     #             or 500-800 (D, followed by 0 to 3 Cs)
-   (XC|XL|L?X{0,3})  # tens - 90 (XC), 40 (XL), 0-30 (0 to 3 Xs),
-                     #        or 50-80 (L, followed by 0 to 3 Xs)
-   (IX|IV|V?I{0,3})  # ones - 9 (IX), 4 (IV), 0-3 (0 to 3 Is),
-                     #        or 5-8 (V, followed by 0 to 3 Is)
-   $                 # end of string
-   ''', re.VERBOSE)
-         
-###   
 def from_roman(s):
    '''convert Roman numeral to integer'''
-   if not roman_numeral_pattern.search(s):
-      raise InvalidRomanNumeralError('Invalid Roman numeral: {0}'.format(s))
+   if not isinstance(s, str):
+      raise InvalidRomanNumeralError('Input should be a string')
+   if not s:
+      raise InvalidRomanNumeralError('Invalid Roman numeral: blank string passed')   
+   if s not in from_roman_table:
+      raise InvalidRomanNumeralError('Invalid Roman numeral: {}'.format(s))   
+   
+   return from_roman_table[s]
 
-   result = 0
-   index = 0
-   for numeral, integer in roman_numeral_map:
-      while s[index:index + len(numeral)] == numeral:
-         result += integer
-         index += len(numeral)
-   return result
 
+###
+
+def build_lookup_tables():
+   def build_to_roman(n):
+      result = ''
+      for numeral, integer in roman_numeral_map:
+         if n >= integer:
+            print('n:', n, 'numeral: ', numeral, 'integer:', integer)
+            result = numeral
+            n -= integer
+            print('n:', n, 'result: ', result)
+            break
+      if n > 0:
+         result += to_roman_table[n]
+      print('n:', n, 'result: ', result, "\n---------")
+      return result
+   
+   for integer in range(1, 5000):
+      roman_numeral = build_to_roman(integer)
+      to_roman_table.append(roman_numeral)
+      from_roman_table[roman_numeral] = integer   
+
+build_lookup_tables()

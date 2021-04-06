@@ -58,7 +58,12 @@ class KnownValues(unittest.TestCase):
                     (3844, 'MMMDCCCXLIV'),
                     (3888, 'MMMDCCCLXXXVIII'),
                     (3940, 'MMMCMXL'),
-                    (3999, 'MMMCMXCIX'))
+                    (3999, 'MMMCMXCIX'),
+                    (4000, 'MMMM'),
+                    (4500, 'MMMMD'),
+                    (4888, 'MMMMDCCCLXXXVIII'),
+                    (4999, 'MMMMCMXCIX') )
+                    
 
    def test_to_roman_known_values(self):
       '''to_roman should give known result with known input'''
@@ -76,7 +81,7 @@ class KnownValues(unittest.TestCase):
 class ToRomanBadInput(unittest.TestCase):
    def test_too_large(self):
       '''to_roman should fail with large input'''
-      self.assertRaises(roman.OutOfRangeError, roman.to_roman, 4000)
+      self.assertRaises(roman.OutOfRangeError, roman.to_roman, 5000)
 
    def test_zero(self):
       '''to_roman should fail with 0 input'''
@@ -94,7 +99,7 @@ class ToRomanBadInput(unittest.TestCase):
 class FromRomanBadInput(unittest.TestCase):
    def test_too_many_repeated_numerals(self):
       '''from_roman should fail with too many repeated numerals'''
-      for s in ('MMMM', 'DD', 'CCCC', 'LL', 'XXXX', 'VV', 'IIII'):
+      for s in ('MMMMM', 'DD', 'CCCC', 'LL', 'XXXX', 'VV', 'IIII'):
          self.assertRaises(roman.InvalidRomanNumeralError, roman.from_roman, s)
 
    def test_repeated_pairs(self):
@@ -107,14 +112,21 @@ class FromRomanBadInput(unittest.TestCase):
       for s in ('IIMXCC', 'VX', 'DCM', 'CMM', 'IXIV', 'MCMC', 'XCX', 'IVI', 'LM', 'LD', 'LC'):
          self.assertRaises(roman.InvalidRomanNumeralError, roman.from_roman, s)
 
+   def test_blank(self):
+      '''from_roman should fail with blank string'''
+      self.assertRaises(roman.InvalidRomanNumeralError, roman.from_roman, "")
+      self.assertRaises(roman.InvalidRomanNumeralError, roman.from_roman, "       \t")
+
+
 ###
 class RoundTripCheck(unittest.TestCase):
    def test_roundtrip(self):
       '''from_roman(to_roman(n))==n for all n'''
-      for integer in range(1,4000):
+      for integer in range(1, 5000):
          numeral = roman.to_roman(integer)
          result = roman.from_roman(numeral)
          self.assertEqual(integer, result)
 
+###
 if __name__ == '__main__':
     unittest.main()
